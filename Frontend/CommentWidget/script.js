@@ -1,247 +1,254 @@
-let commentsArr = [];
-let commentId = 0;
-let commentsDiv = document.querySelector('.comments');
-
-commentsDiv.addEventListener('click', (e) => {
-    if (e.target.tagName == 'BUTTON') {
-        switch (e.target.id) {
-            case 'Edit':
-                editComment(e.target.dataset.cid);
-                break;
-            case 'SubmitEdit':
-                submitEditComment(e.target.dataset.cid);
-                break;
-            case 'CancelEdit':
-                cancelEditComment(e.target.dataset.cid);
-                break;
-            case 'Delete':
-                deleteComment(e.target.dataset.cid);
-                break;
-            case 'Reply':
-                replyComment(e.target.dataset.cid);
-                break;
-            case 'SubmitReply':
-                submitReplyComment(e.target.dataset.cid);
-                break;
-            case 'CancelReply':
-                cancelReplyComment(e.target.dataset.cid);
-                break;
+(function () {
+    class Comment {
+        constructor(userName, text, commentList) {
+            this.userName = userName;
+            this.text = text;
+            this.commentList = commentList;
+        }
+        save() {
+            var commentList = JSON.parse(localStorage.getItem('commentList')) || [];
+            commentList.push(this);
+            createCommentView(commentList);
+        }
+        reply(userName, text) {
+            var reply = new Comment(userName, text, []);
+            this.commentList.push(reply);
+        }
+        edit(editedText) {
+            var commentList = JSON.parse(localStorage.getItem('commentList')) || [];
+            commentList = findAndUpdateComment(commentList, this, 'edit', editedText);
+            createCommentView(commentList);
+        }
+        delete() {
+            var commentList = JSON.parse(localStorage.getItem('commentList')) || [];
+            commentList = findAndUpdateComment(commentList, this, 'delete');
+            createCommentView(commentList);
+        }
+        updateReplyList() {
+            var commentList = JSON.parse(localStorage.getItem('commentList')) || [];
+            commentList = findAndUpdateComment(commentList, this);
+            createCommentView(commentList);
         }
     }
-});
 
-const submitComment = function() {
-    let comment = document.querySelector('#txtComment');
-    if (comment.value) {
-        // insert new comment to the comment array
-        commentsArr.push({cid: ++commentId, comment: comment.value, comments: []});
+    function findAndUpdateComment(commentList, comment, action = 'reply', editedText = '') {
+        for (let i = 0; i < commentList.length; i++) {
+            if (commentList[i].text == comment.text && commentList[i].userName == comment.userName) {
+                if (action == 'delete') 
+                    commentList.splice(i, 1);
+                else if (action == 'edit') 
+                    commentList[i].text = editedText;
+                else
+                    commentList[i] = comment;
 
-        // add the inserted comment into the comment list
-        let elm = createCommentElement(commentId, comment.value);
-        commentsDiv.appendChild(elm);
-
-        // clear the comment entry box
-        comment.value = '';
-    }
-};
-
-const editComment = function(cid) {
-    let currElement = commentsDiv.querySelector('#c_' + cid)
-    
-    // hide action panel
-    currElement.querySelector('.action').setAttribute('style', 'display: none');
-
-    // create edit elements
-    let editCommentDiv = document.createElement('div');
-    editCommentDiv.setAttribute('class', 'comment-edit');
-
-    let editText = document.createElement('TEXTAREA');
-    editText.setAttribute('id', 'txtEdit');
-    editText.value = currElement.querySelector('span').innerText;
-    editCommentDiv.appendChild(editText);
-
-    let editSubmit = document.createElement('button');
-    editSubmit.setAttribute('id', 'SubmitEdit');
-    editSubmit.setAttribute('data-cid', cid);
-    editSubmit.innerHTML = "Submit";
-    editCommentDiv.appendChild(editSubmit);
-
-    let cancelSubmit = document.createElement('button');
-    cancelSubmit.setAttribute('id', 'CancelEdit');
-    cancelSubmit.setAttribute('data-cid', cid);
-    cancelSubmit.innerHTML = "Cancel";
-    editCommentDiv.appendChild(cancelSubmit);
-
-    currElement.insertBefore(editCommentDiv, currElement.childNodes[1]);
-};
-
-const submitEditComment = function(cid) {
-    let editComment = commentsDiv.querySelector('#c_' + cid);
-    let newCommentText = editComment.querySelector('#txtEdit').value;
-    if (newCommentText) {
-        // update the selected comment in array
-        UpdateCommentToArray(commentsArr, cid, {cid: cid, comment: newCommentText, comments: []}, true);
-
-        // insert the edited comment into the comment list
-        editComment.querySelector('span').innerText = newCommentText;
-        
-        // remove edit panel
-        editComment.removeChild(editComment.querySelector('.comment-edit'));
-
-        // show action panel
-        editComment.querySelector('.action').setAttribute('style', '');
-    }
-};
-
-const cancelEditComment = function(cid) {
-    let currElement = commentsDiv.querySelector('#c_' + cid);
-
-    // remove edit panel
-    currElement.removeChild(currElement.querySelector('.comment-edit'));
-
-    // show action panel
-    currElement.querySelector('.action').setAttribute('style', '');
-};
-
-const deleteComment = function(cid) {
-    if (confirm("Are you sure?")) {
-        // remove the selected comment from the comment array
-        deleteCommentFromArray(commentsArr, cid);
-
-        // remove rhe deleted comment form the comment list
-        let deletedComment = commentsDiv.querySelector('#c_' + cid);
-        deletedComment.parentElement.removeChild(deletedComment);
-    }
-};
-
-const replyComment = function(cid) {
-    let currElement = commentsDiv.querySelector('#c_' + cid);
-    
-    // hide action panel
-    currElement.querySelector('.action').setAttribute('style', 'display: none');
-
-    // create reply elements
-    let replyCommentDiv = document.createElement('div'); 
-    replyCommentDiv.setAttribute('class', 'comment-reply');
-
-    let replyText = document.createElement('TEXTAREA');
-    replyText.setAttribute('id', 'txtReply');
-    replyCommentDiv.appendChild(replyText);
-
-    let replySubmit = document.createElement('button');
-    replySubmit.setAttribute('id', 'SubmitReply');
-    replySubmit.setAttribute('data-cid', cid);
-    replySubmit.innerHTML = "Submit";
-    replyCommentDiv.appendChild(replySubmit);
-
-    let cancelSubmit = document.createElement('button');
-    cancelSubmit.setAttribute('id', 'CancelReply');
-    cancelSubmit.setAttribute('data-cid', cid);
-    cancelSubmit.innerHTML = "Cancel";
-    replyCommentDiv.appendChild(cancelSubmit);
-
-    currElement.insertBefore(replyCommentDiv, currElement.childNodes[1]);
-};
-
-const cancelReplyComment = function(cid) {
-    let currElement = commentsDiv.querySelector('#c_' + cid);
-
-    // remove reply panel
-    currElement.removeChild(currElement.querySelector('.comment-reply'));
-
-    // show action panel
-    currElement.querySelector('.action').setAttribute('style', '');
-};
-
-const submitReplyComment = function(cid) {
-    let replyComment = commentsDiv.querySelector('#c_' + cid);
-    let newCommentText = replyComment.querySelector('#txtReply').value;
-    if (newCommentText) {
-        // insert the comment into array
-        UpdateCommentToArray(commentsArr, cid, {cid: ++commentId, comment: newCommentText, comments: []});
-
-        // insert the reply comment into the comment list
-        let newComment = createCommentElement(commentId, newCommentText);
-        replyComment.appendChild(newComment);
-
-        // remove edit panel
-        replyComment.removeChild(replyComment.querySelector('.comment-reply'));
-        
-        // show action panel
-        replyComment.querySelector('.action').setAttribute('style', '');
-    }
-};
-
-const UpdateCommentToArray = function(commentsArr, cid, newComment, isEdit = false) {
-    if (commentsArr.cid == cid) {
-        if (isEdit) {
-            commentsArr.comment = newComment.comment;
-        } else {
-            commentsArr.comments.push(newComment);
-        }
-        return commentsArr;
-    }
-
-    for (let i = 0; i < Object.keys(commentsArr).length; i++) {
-        const nextObject = commentsArr[Object.keys(commentsArr)[i]];
-        if (nextObject && typeof nextObject === "object") {
-            let item = UpdateCommentToArray(nextObject, cid, newComment, isEdit);
-            if (item != null) {
-                return item;
+                return commentList;
+            }
+            if (commentList[i].commentList.length > 0) {
+                findAndUpdateComment(commentList[i].commentList, comment, action, editedText);
             }
         }
+        return commentList;
     }
 
-    return null;
-}
+    function createCommentView(commentList) {
+        let docFrag = document.createDocumentFragment();
+        docFrag.appendChild(showComments(commentList));
+        document.getElementById('viewComments').innerHTML = '';
+        document.getElementById('viewComments').appendChild(docFrag);
+        localStorage.setItem('commentList', JSON.stringify(commentList));
+    }
 
-const deleteCommentFromArray = function(commentsArr, cid) {
-    for (let i=0; i<commentsArr.length; i++) {
-        if (commentsArr[i].cid == cid) {
-            commentsArr.splice(i, 1);
-            return;
-        } else {
-            if (commentsArr[i].comments.length)
-                return deleteCommentFromArray(commentsArr[i].comments, cid);
-            else
-                return;
+    function createComment(userName, text) {
+        var comment = new Comment(userName, text, []);
+        comment.save();
+        return comment;
+    }
+
+    function showComments(commentList) {
+        var mainUL = document.createElement("ul");
+        mainUL.setAttribute('class', 'mainUL');
+        for (var i = 0; i < commentList.length; i++) {
+            var comment = new Comment(commentList[i].userName, commentList[i].text, commentList[i].commentList);
+            var li = createLi(comment);
+            mainUL.appendChild(li);
+            if (commentList[i].commentList.length > 0) {
+                mainUL.appendChild(showComments(commentList[i].commentList));
+            }
         }
+        return mainUL;
     }
-}
 
-const createCommentElement = function(id, commentBody) {
-    let commentDiv = document.createElement('div');
-    let commentSpan = document.createElement('span');
-    let commentActionDiv = document.createElement('div');
-    let commentEditAction = document.createElement('button');
-    let commentDeleteAction = document.createElement('button');
-    let commentReplyAction = document.createElement('button');
+    function createLi(comment) {
+        // main li element
+        let li = document.createElement('li');
 
-    commentDiv.setAttribute('id', 'c_' + id);
-    commentDiv.setAttribute('class', 'comment');
 
-    commentSpan.innerHTML = commentBody;
+        // main div for the li element
+        let mainDiv = document.createElement('div');
+        mainDiv.setAttribute('class', 'mainDiv');
 
-    commentDiv.appendChild(commentSpan);
 
-    commentActionDiv.setAttribute('class', 'action');
+        //commentDiv which will have comment and username
+        let commentDiv = document.createElement('div');
+        commentDiv.setAttribute('class', 'commentDiv');
 
-    commentActionDiv.appendChild(commentReplyAction);
-    commentReplyAction.setAttribute('id', 'Reply');
-    commentReplyAction.setAttribute('data-cid', id);
-    commentReplyAction.innerHTML = "Reply";
+        let commentUserNameDiv = document.createElement('div');
+        commentUserNameDiv.setAttribute('class', 'commentUserNameDiv');
+        commentUserNameDiv.innerHTML = comment.userName;
 
-    commentActionDiv.appendChild(commentDeleteAction);
-    commentDeleteAction.setAttribute('data-cid', id);
-    commentDeleteAction.setAttribute('id', 'Delete');
-    commentDeleteAction.innerHTML = "Delete";
+        let commentTextDiv = document.createElement('div');
+        commentTextDiv.innerHTML = comment.text;
 
-    commentActionDiv.appendChild(commentEditAction);
-    commentEditAction.setAttribute('data-cid', id);
-    commentEditAction.setAttribute('id', 'Edit');
-    commentEditAction.innerHTML = "Edit";
+        commentDiv.appendChild(commentUserNameDiv);
+        commentDiv.appendChild(commentTextDiv);
 
-    commentDiv.appendChild(commentActionDiv);
 
-    return commentDiv;
-}
+        //reply username div
+        var replyUserNameDiv = document.createElement("div");
+
+        var replyUsernameInput = document.createElement("input");
+        replyUsernameInput.setAttribute('class', 'replyUsernameInput');
+        replyUsernameInput.setAttribute('placeholder', 'Username');
+        replyUserNameDiv.appendChild(replyUsernameInput);
+
+        // reply comment div
+        let replyCommentDiv = document.createElement('div');
+        replyCommentDiv.setAttribute('class', 'replyCommentDiv');
+
+        let replyCommentInput = document.createElement('input');
+        replyCommentInput.setAttribute('class', 'replyCommentInput');
+        replyCommentInput.setAttribute('placeholder', 'Comment');
+        replyCommentDiv.appendChild(replyCommentInput);
+
+        //reply post button which will create a new comment
+        let postReplyButton = document.createElement('button');
+        postReplyButton.innerHTML = "Post";
+        postReplyButton.onclick = function() {
+            let content = replyCommentInput.value;
+            let user = replyUsernameInput.value;
+            comment.reply(user, content);
+            comment.updateReplyList();
+        };
+
+        let cancelReplyButton = document.createElement('button');
+        cancelReplyButton.innerHTML = "Cancel";
+        cancelReplyButton.onclick = function() {
+            actionDiv.setAttribute('class', 'actionDiv');
+            hiddenReplyDiv.style.cssText = "display: none;";
+            editButton.style.cssText = '';
+            deleteButton.style.cssText = '';
+            replyButton.style.cssText = '';
+        };
+		
+        let hiddenReplyDiv = document.createElement("div");
+        hiddenReplyDiv.style.cssText = 'display:none';
+        hiddenReplyDiv.appendChild(replyUserNameDiv);
+        hiddenReplyDiv.appendChild(replyCommentDiv);
+        hiddenReplyDiv.appendChild(postReplyButton);
+        hiddenReplyDiv.appendChild(cancelReplyButton);
+
+
+        // edit comment div
+        let editCommentDiv = document.createElement('div');
+        editCommentDiv.setAttribute('class', 'editCommentDiv');
+
+        let editCommentInput = document.createElement('input');
+        editCommentInput.setAttribute('class', 'editCommentInput');
+        editCommentInput.setAttribute('placeholder', 'Comment');
+        editCommentDiv.appendChild(editCommentInput);
+        
+        //edit post button which will update the current comment
+        let postEditButton = document.createElement('button');
+        postEditButton.innerHTML = "Update";
+        postEditButton.onclick = function() {
+            let editedText = editCommentInput.value;
+            comment.edit(editedText);
+        };
+
+        let cancelEditButton = document.createElement('button');
+        cancelEditButton.setAttribute('id', 'CancelEdit');
+        cancelEditButton.innerHTML = "Cancel";
+        cancelEditButton.onclick = function() {
+            actionDiv.setAttribute('class', 'actionDiv');
+            hiddenEditDiv.style.cssText = "display: none;";
+            editButton.style.cssText = '';
+            deleteButton.style.cssText = '';
+            replyButton.style.cssText = '';
+        };
+		
+        let hiddenEditDiv = document.createElement("div");
+        hiddenEditDiv.style.cssText = 'display:none';
+        hiddenEditDiv.appendChild(editCommentDiv);
+        hiddenEditDiv.appendChild(postEditButton);
+        hiddenEditDiv.appendChild(cancelEditButton);
+
+
+        //action div  
+        let replyButton = document.createElement('button');
+        let editButton = document.createElement('button');
+        let deleteButton = document.createElement('button');
+
+        replyButton.innerHTML = "Reply";
+        replyButton.onclick = function() {
+            editButton.style.cssText = 'display:none';
+            deleteButton.style.cssText = 'display:none';
+            replyButton.style.cssText = 'display:none';
+            hiddenReplyDiv.style.cssText = '';
+            hiddenReplyDiv.parentElement.setAttribute('class', 'hiddenReplyDiv');
+        }
+
+        editButton.innerHTML = "Edit";
+        editButton.onclick = function() {
+            editButton.style.cssText = 'display:none';
+            deleteButton.style.cssText = 'display:none';
+            replyButton.style.cssText = 'display:none';
+            hiddenEditDiv.style.cssText = '';
+            hiddenEditDiv.parentElement.setAttribute('class', 'hiddenReplyDiv');
+            editCommentInput.value = comment.text;
+        }
+
+        deleteButton.innerHTML = "Delete";
+        deleteButton.onclick = function() {
+            if (confirm('Are you sure?')) {
+                comment.delete();
+            }
+        }
+        
+		// replyDiv, editDiv which will show up on click of reply/edit button
+        let actionDiv = document.createElement("div");
+        actionDiv.setAttribute('class', 'actionDiv');
+
+        actionDiv.appendChild(replyButton);
+        actionDiv.appendChild(editButton);
+        actionDiv.appendChild(deleteButton);
+        actionDiv.appendChild(hiddenReplyDiv);
+        actionDiv.appendChild(hiddenEditDiv);
+        
+        // add commenDiv and actionDiv to mainDiv
+        mainDiv.appendChild(commentDiv);
+        mainDiv.appendChild(actionDiv);
+
+        // add main div to li
+        li.appendChild(mainDiv);
+        
+        return li;
+    }
+
+    document.getElementById('post').addEventListener('click', function() {
+        var userName = document.getElementById('userName');
+        var content = document.getElementById('joinDiscussion');
+        if (userName.value && content.value) {
+            createComment(userName.value, content.value);
+            userName.value = '';
+            content.value = '';
+        } else {
+            alert('Please provide the request data.')
+            content.value ? userName.focus() : content.focus();
+        }
+    });
+
+    var commentList = JSON.parse(window.localStorage.getItem('commentList')) || [];
+    if (commentList.length) {
+        createCommentView(commentList);
+    }
+})();

@@ -1,22 +1,17 @@
+<!doctype html>
 <html>
-    <head>
-        <title>Comment Widget</title>
-        <link href=".\style.css" type="text/css" rel="stylesheet" />
-    </head>
-    <body>
-        <div class="comment-container">
-            <div class="comment-add">
-                <textarea id="txtComment" type="text" placeholder="Put your comment here..."></textarea>
-                <div class="submit-button">
-                    <button id="btnSubmit" onclick="submitComment()">Submit</button>
-                </div>
-            </div>
-            <div class="comment-list">
-                <h4>Comments</h4>
-                <div class="comments"></div>
-            </div>
+	<head>
+		<meta charset="utf-8">
+		<title>Simple Commenting Widget</title>
+        <link href="style.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+        <textarea id="joinDiscussion" cols="50" placeholder="Join the discussion"></textarea>
+        <div>
+            <input type="input" id="userName" placeholder="Username" />
+            <input type="button" value="Post" id="post" />
         </div>
-    </body>
-
-    <script src=".\script.js" type="text/javascript"></script>
+        <section id="viewComments"></section>
+	</body>
+    <script src="script.js" type="text/javascript"></script>
 </html>
