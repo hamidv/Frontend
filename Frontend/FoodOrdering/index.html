@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Food Ordering App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="header">
+      <a href="index.html">Food Ordering App!</a>
+    </div>
+    <div class="container">
+      <div>
+        <input
+          type="text"
+          class="search-input"
+          id="searchInput"
+          placeholder="Search for names ..."
+        />
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-button dropdown-sort">Sort by</button>
+        <div class="dropdown-content" id="dropdown-sort">
+          <a href="#" data-value="Name">Name</a>
+          <a href="#" data-value="Rating">Rating</a>
+          <a href="#" data-value="ETA">ETA</a>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-button dropdown-filter">Filter by</button>
+        <div class="dropdown-content" id="dropdown-filter">
+          <a href="#" data-value="">Show All</a>
+          <a href="#" data-value="North Indian">North Indian</a>
+          <a href="#" data-value="Fast Food">Fast Food</a>
+          <a href="#" data-value="Mughlai">Mughlai</a>
+          <a href="#" data-value="American">American</a>
+          <a href="#" data-value="Indian">Indian</a>
+          <a href="#" data-value="Thalis">Thalis</a>
+          <a href="#" data-value="Street Food">Street Food</a>
+          <a href="#" data-value="Continental">Continental</a>
+          <a href="#" data-value="South Indian">South Indian</a>
+          <a href="#" data-value="Snacks">Snacks</a>
+          <a href="#" data-value="Chinese">Chinese</a>
+          <a href="#" data-value="Italian">Italian</a>
+          <a href="#" data-value="Cafe">Cafe</a>
+        </div>
+      </div>
+      <div id="RestaurantList" class="restaurant-list"></div>
+      <h1 id="NotificationMessage"></h1>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
