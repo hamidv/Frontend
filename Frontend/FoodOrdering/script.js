@@ -11,18 +11,18 @@
   let getData = () =>
     fetch("http://localhost/data.json").then((data) => data.json());
 
-  // returns single restaurant card
-  let getRetaurantCard = (singleRestaurantData) => {
+  // returns a restaurant card
+  let getRetaurantCard = (restaurant) => {
     return `<div class="card">
-                <img class="card-img-top" src="${singleRestaurantData.img}" alt="Card image" />
+                <img class="card-img-top" src="${restaurant.img}" alt="Card image" />
                 <div class="card-body">
-                    <h6 class="card-title">${singleRestaurantData.name}</h6>
-                    <p class="tags">${singleRestaurantData.tags}</p>
+                    <h6 class="card-title">${restaurant.name}</h6>
+                    <p class="tags">${restaurant.tags}</p>
                     <div class="details">
                         <div class="rating">
-                            &#11088;${singleRestaurantData.rating}
+                            &#11088;${restaurant.rating}
                         </div>
-                        <span class="eta"> ETA ${singleRestaurantData.eta} Min</span>
+                        <span class="eta"> ETA ${restaurant.eta} Min</span>
                         <a href="#" class="view-menu">View Menu</a>
                     </div>
                 </div>
