@@ -1,0 +1,84 @@
+@import "main.css";
+@import "blog-post-layout.css";
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+
+.back-to-hp {
+  padding: 20px 0;
+}
+.back-to-hp a {
+  text-decoration: underline;
+  color: blue;
+}
+
+.blog-title {
+  font-size: 28px;
+  padding-bottom: 20px;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.author-name {
+  font-size: 20px;
+  padding: 10px 0;
+  font-weight: bold;
+}
+.author-title {
+  padding: 10px 0;
+  font-style: italic;
+}
+.author-company {
+  padding: 10px 0;
+  text-decoration: underline;
+}
+.author-desc {
+  padding: 10px 0;
+  font-weight: bold;
+}
+figure  {
+  margin: auto 0;
+}
+figure img {
+  width: 250px;
+}
+figcaption {
+  font-style: italic;
+  font-size: 14px;
+}
+
+.socialmediaicons a {
+  margin: 20px 0;
+}
+.socialmediaicons a {
+  padding: 10px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 30px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+  display: inline-block;
+}
+.socialmediaicons a.facebook {
+  background: #3b5998;
+  color: white;
+}
+.socialmediaicons a.facebook::before {
+  content: "\f09a";
+}
+.socialmediaicons a.twitter {
+  background: #55acee;
+  color: white;
+}
+.socialmediaicons a.twitter::before {
+  content: "\f099";
+}
+.socialmediaicons a.linkedin {
+  background: #125688;
+  color: white;
+}
+.socialmediaicons a.linkedin::before {
+  content: "\f0e1";
+}

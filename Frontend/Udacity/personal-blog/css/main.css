@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+p, h1 {
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.button-link {
+  padding: 5px;
+  display: block;
+  text-transform: uppercase;
+}
+
+.button-default {
+  border-radius: 5px;
+  background-color: rgb(62, 206, 231);
+  color: #fffff8;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px;
+  display: block;
+  text-transform: uppercase;
+}
+.button-outlined {
+  border-radius: 5px;
+  border: 1px solid rgb(62, 206, 231);
+  color: rgb(62, 206, 231);
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px;
+  display: block;
+  text-transform: uppercase;
+}
