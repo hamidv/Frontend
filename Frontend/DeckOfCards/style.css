@@ -1,0 +1,60 @@
+.deck {
+  width: 85%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.shuffle {
+  color: white;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid transparent;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  background-color: #28a745;
+  border-color: #28a745;
+  width: 150px;
+  margin-bottom: 15px;
+}
+
+.card {
+  display: inline-block;
+  padding: 10px;
+  border: solid 1px #808080;
+  border-radius: 10px;
+  margin: 3px;
+}
+
+.card .value {
+  font-size: 15pt;
+  font-weight: bold;
+}
+
+.card .suit {
+  background-image: url("card.png");
+  height: 100px;
+  width: 90px;
+}
+
+.card .spades {
+  background-position-x: 5px;
+}
+
+.card .diamonds {
+  background-position-x: 3px;
+  background-position-y: 100px;
+}
+
+.card .clubs {
+  background-position-x: 92px;
+  background-position-y: 100px;
+}
+
+.card .hearts {
+  background-position-x: 92px;
+}
